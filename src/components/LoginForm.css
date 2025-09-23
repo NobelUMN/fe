@@ -1,0 +1,99 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.login-left {
+  flex: 1;
+  background: #23398a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-left h1 {
+  font-weight: bold;
+  font-size: 3rem;
+  margin-bottom: 0;
+}
+
+.login-left p {
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+.login-right {
+  flex: 1;
+  background: #fff;
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form {
+  width: 320px;
+}
+
+.login-form h2 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.login-form p {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 2px solid #23398a;
+  outline: none;
+  font-size: 16px;
+  margin-bottom: 10px;
+  background: transparent;
+}
+
+.login-forgot {
+  text-align: right;
+  margin-top: 5px;
+}
+
+.login-forgot a {
+  color: #888;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.login-error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.login-success {
+  color: green;
+  margin-bottom: 10px;
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px 0;
+  background: linear-gradient(90deg, #23398a 60%, #a1a9c9 100%);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
