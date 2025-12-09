@@ -14,21 +14,10 @@ function TransaksiAdmin() {
     const fetchTransaksi = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            console.log('TOKEN FROM LOCALSTORAGE:', token);
-            
-            const headers = { 'Content-Type': 'application/json' };
-            if (token) headers.Authorization = `Bearer ${token}`;
-            
-            console.log('FETCHING TRANSAKSI with headers:', headers);
-            
             const res = await fetch("https://be-production-6856.up.railway.app/api/transaksi", {
-                headers,
                 mode: 'cors',
                 credentials: 'include'
             });
-            
-            console.log('RESPONSE STATUS:', res.status, res.statusText);
             
             if (!res.ok) {
                 const errorText = await res.text();
@@ -39,8 +28,6 @@ function TransaksiAdmin() {
             
             const data = await res.json();
             console.log('TRANSAKSI DATA RECEIVED:', data);
-
-            // langsung tampilkan data utama dulu tanpa detail
             setTransaksi(data);
             setLoading(false);
 
@@ -48,7 +35,6 @@ function TransaksiAdmin() {
             const updatePromises = data.map(async (trx) => {
                 try {
                     const detailRes = await fetch(`https://be-production-6856.up.railway.app/api/transaksi/${trx.id_transaksi}`, {
-                        headers,
                         mode: 'cors',
                         credentials: 'include'
                     });
