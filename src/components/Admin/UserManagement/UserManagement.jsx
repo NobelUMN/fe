@@ -130,8 +130,6 @@ function UserManagement() {
 			<button className='tambah-user' onClick={() => openModal("add")}>Tambah User</button>
 			{loading ? (
 				<p>Loading...</p>
-			) : error ? (
-				<p style={{ color: "red" }}>{error}</p>
 			) : (
 					<table className="user-table">
 						<thead>
