@@ -22,48 +22,25 @@ function LoginForm({ onLoginSuccess }) {
       }
       const response = await login(username, password);
       
-      // Validasi response object
-      if (typeof response !== 'object') {
-        setError('Response tidak valid dari server');
-        return;
-      }
+      // Token, username, role sudah disimpan di localStorage oleh login()
+      const userRole = localStorage.getItem('role');
       
-      if (response.success && response.data) {
-        // Simpan token ke localStorage dari response.data.token
-        const tokenValue = response.data.token;
-        if (tokenValue) {
-          localStorage.setItem('auth_token', tokenValue);
+      console.log('LOGIN SUCCESSFUL - Token dan role sudah disimpan');
+      
+      setRole(userRole);
+      setSuccess('Login berhasil!');
+      setShowModal(true);
+      
+      setTimeout(() => {
+        setShowModal(false);
+        if (userRole && userRole.toLowerCase() === 'kasir') {
+          onLoginSuccess('kasir', username);
+        } else if (userRole && userRole.toLowerCase() === 'admin') {
+          onLoginSuccess('admin', username);
         } else {
-          setError('Token tidak ditemukan dalam response');
-          return;
+          setError('Role tidak dikenali: ' + userRole);
         }
-        
-        // Simpan username ke localStorage
-        localStorage.setItem('auth_username', username);
-        localStorage.setItem('auth_user_name', response.data.name || response.data.username || username);
-        
-        // Ekstrak role dari response.data.role
-        const userRole = response.data.role;
-        
-        console.log('LOGIN SUCCESSFUL:', { token: tokenValue, role: userRole, username });
-        
-        setRole(userRole);
-        setSuccess('Login berhasil!');
-        setShowModal(true);
-        
-        setTimeout(() => {
-          setShowModal(false);
-          if (userRole && userRole.toLowerCase() === 'kasir') {
-            onLoginSuccess('kasir', response.data.name || username);
-          } else if (userRole && userRole.toLowerCase() === 'admin') {
-            onLoginSuccess('admin', response.data.name || username);
-          } else {
-            setError('Role tidak dikenali: ' + userRole);
-          }
-        }, 1000);
-      } else {
-        setError(response.message || 'Login gagal');
-      }
+      }, 1000);
     } catch (err) {
       setError('Terjadi kesalahan: ' + (err.message || err));
     }

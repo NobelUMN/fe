@@ -2,13 +2,12 @@
 const BASE_URL = 'https://be-production-6856.up.railway.app';
 
 export async function sendHardwareCommand(cmd, device = null) {
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem('token');
   const body = { cmd };
   if (device) body.device = device;
 
   const headers = {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 

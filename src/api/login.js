@@ -13,23 +13,13 @@ export async function login(username, password) {
     }),
   });
 
-  let data = null;
-  try {
-    data = await response.json();
-  } catch (err) {
-    console.error('LOGIN API: Failed to parse JSON', err);
-    return {
-      success: false,
-      message: 'Login gagal: Invalid response from server',
-    };
+  const data = await response.json();
+  if (data.success) {
+    localStorage.setItem('token', data.data.token);
+    localStorage.setItem('username', data.data.username);
+    localStorage.setItem('role', data.data.role);
+    // redirect ke dashboard
+  } else {
+    alert(data.message);
   }
-
-  console.log('LOGIN API RESPONSE:', data);
-  
-  return {
-    success: data.success || false,
-    data: data.data || null,
-    message: data.message || 'Login gagal',
-  };
-  };
 }
