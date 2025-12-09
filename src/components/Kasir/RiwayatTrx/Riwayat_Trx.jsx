@@ -23,7 +23,7 @@ function RiwayatTransaksi({ onLogout, setActiveMenu, activeMenu }) {
   const handleUpdateStatus = async (trx, newStatus) => {
     setUpdatingStatus(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/transaksi/${trx.id_transaksi}/status`, {
+      const res = await fetch(`https://be-production-6856.up.railway.app/api/transaksi/${trx.id_transaksi}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ function RiwayatTransaksi({ onLogout, setActiveMenu, activeMenu }) {
   useEffect(() => {
   const loadData = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/transaksi');
+      const res = await fetch('https://be-production-6856.up.railway.app/api/transaksi');
       const data = await res.json();
 
       // Tampilkan dulu datanya tanpa detail
@@ -59,7 +59,7 @@ function RiwayatTransaksi({ onLogout, setActiveMenu, activeMenu }) {
       const detailed = await Promise.all(
         data.map(async trx => {
           try {
-            const detailRes = await fetch(`http://localhost:8000/api/transaksi/${trx.id_transaksi}`);
+            const detailRes = await fetch(`https://be-production-6856.up.railway.app/api/transaksi/${trx.id_transaksi}`);
             const detailData = await detailRes.json();
             return { ...trx, details: detailData.details || [] };
           } catch {

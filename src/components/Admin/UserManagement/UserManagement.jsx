@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./UserManagement.css";
 
-const API_URL = "http://localhost:8000/api/users"; // Use plural for RESTful endpoint
+const API_URL = "https://be-production-6856.up.railway.app/api/users"; // Use plural for RESTful endpoint
 
 function UserManagement() {
 	const [users, setUsers] = useState([]);

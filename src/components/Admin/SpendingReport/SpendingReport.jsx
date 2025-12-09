@@ -24,7 +24,7 @@ function CatatanPengeluaran() {
 
   // Ambil data pengeluaran dari API saat komponen mount
   useEffect(() => {
-    fetch("http://localhost:8000/api/spending-report")
+    fetch("https://be-production-6856.up.railway.app/api/spending-report")
       .then(res => res.json())
       .then(data => {
         setPengeluaran(data);
@@ -87,7 +87,7 @@ function CatatanPengeluaran() {
 
     let res;
     try {
-      res = await fetch("http://localhost:8000/api/spending-report", {
+      res = await fetch("https://be-production-6856.up.railway.app/api/spending-report", {
         method: "POST",
         headers,
         body: JSON.stringify(payload)
@@ -101,7 +101,7 @@ function CatatanPengeluaran() {
     console.log('SpendingReport: POST response status', res.status);
     if (res.ok) {
       // Setelah submit, fetch ulang data dari backend
-      fetch("http://localhost:8000/api/spending-report")
+      fetch("https://be-production-6856.up.railway.app/api/spending-report")
         .then(res => res.json())
         .then(data => setPengeluaran(data));
       setForm({

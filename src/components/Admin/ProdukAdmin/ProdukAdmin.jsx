@@ -55,7 +55,7 @@ function ProdukAdmin() {
 	useEffect(() => {
 		const interval = setInterval(async () => {
 			try {
-const res = await fetch("http://localhost:8000/api/hardware/barcode");
+const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/barcode");
 				if (!res.ok) return;
 
 				const data = await res.json();
@@ -89,7 +89,7 @@ const res = await fetch("http://localhost:8000/api/hardware/barcode");
 		if (found) return found;
 		// try backend lookup (if endpoint exists)
 		try {
-			const res = await fetch(`http://localhost:8000/api/produk/barcode/${encodeURIComponent(trimmed)}`);
+			const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`);
 			if (res.status === 200) {
 				const data = await res.json();
 				return data;
@@ -160,7 +160,7 @@ const res = await fetch("http://localhost:8000/api/hardware/barcode");
 	// fungsi fetch produk (GET)
 	const fetchProduk = async () => {
 		try {
-			const res = await fetch('http://localhost:8000/api/produk');
+			const res = await fetch('https://be-production-6856.up.railway.app/api/produk');
 			if (!res.ok) throw new Error('Gagal mengambil data produk');
 			const data = await res.json();
 			setProduk(data);
@@ -186,8 +186,8 @@ const res = await fetch("http://localhost:8000/api/hardware/barcode");
 
 		try {
 			const url = modalMode === 'tambah'
-				? 'http://localhost:8000/api/produk'
-				: `http://localhost:8000/api/produk/${editId}`;
+				? 'https://be-production-6856.up.railway.app/api/produk'
+				: `https://be-production-6856.up.railway.app/api/produk/${editId}`;
 			const method = modalMode === 'tambah' ? 'POST' : 'PUT';
 			const res = await fetch(url, {
 				method,
@@ -221,7 +221,7 @@ const res = await fetch("http://localhost:8000/api/hardware/barcode");
 		}
 		if (!window.confirm('Yakin ingin menghapus produk ini?')) return;
 		try {
-			const res = await fetch(`http://localhost:8000/api/produk/${id_produk}`, {
+			const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/${id_produk}`, {
 				method: 'DELETE',
 				headers: {
 					'Authorization': `Bearer ${token}`

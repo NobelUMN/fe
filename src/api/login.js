@@ -1,6 +1,6 @@
 // Fungsi login untuk autentikasi user
 export async function login(username, password) {
-  const response = await fetch('http://localhost:8000/api/login', {
+  const response = await fetch('https://be-production-6856.up.railway.app/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),

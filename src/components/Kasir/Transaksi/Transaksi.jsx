@@ -219,7 +219,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-const res = await fetch('http://localhost:8000/api/hardware/barcode');
         if (!res.ok) return;
 
         const data = await res.json();
@@ -292,7 +291,7 @@ const res = await fetch('http://localhost:8000/api/hardware/barcode');
     }
 
     try {
-      const listRes = await fetch('http://localhost:8000/api/produk');
+      const listRes = await fetch('https://be-production-6856.up.railway.app/api/produk');
       if (listRes.ok) {
         const list = await listRes.json();
         const normalizedList = (list || []).map(p => ({
@@ -323,7 +322,7 @@ const res = await fetch('http://localhost:8000/api/hardware/barcode');
     }
 
     try {
-      const res = await fetch(`http://localhost:8000/api/produk/barcode/${encodeURIComponent(trimmed)}`);
+      const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`);
       if (res.ok) {
         const data = await res.json();
         if (data && (data.id_produk || data.id)) {
@@ -417,7 +416,7 @@ const res = await fetch('http://localhost:8000/api/hardware/barcode');
       // Ambil token dari localStorage
       const token = localStorage.getItem('auth_token');
 
-      const response = await fetch('http://localhost:8000/api/transaksi', {
+      const response = await fetch('https://be-production-6856.up.railway.app/api/transaksi', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -459,7 +458,7 @@ const res = await fetch('http://localhost:8000/api/hardware/barcode');
         status: data.status || (isNaN(bayarAmount) ? 'BELUM LUNAS' : (Number(bayarAmount) >= Number(subtotal) ? 'LUNAS' : 'BELUM LUNAS'))
       });
 
-      fetch('http://localhost:8000/api/produk')
+      fetch('https://be-production-6856.up.railway.app/api/produk')
         .then(res => res.json())
         .then(data => setProduk(data))
         .catch(() => {});

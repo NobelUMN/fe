@@ -36,7 +36,7 @@ function Dashboard({ onLogout, setActiveMenu, activeMenu }) {
   const [perPage] = useState(10);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/produk')
+    fetch('https://be-production-6856.up.railway.app/api/produk')
       .then(res => res.json())
       .then(data => {
         setProduk(data);
