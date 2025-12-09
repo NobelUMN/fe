@@ -3,50 +3,33 @@ export async function login(username, password) {
   const response = await fetch('https://be-production-6856.up.railway.app/api/login', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      Accept: 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, password }),
     mode: 'cors',
+    credentials: 'include',
+    body: JSON.stringify({
+      username,
+      password,
+    }),
   });
 
-  // Kadang backend balas HTML (error/redirect). Coba parse JSON, jika gagal pakai text.
-  let rawText = '';
   let data = null;
   try {
-    rawText = await response.text();
-    data = JSON.parse(rawText);
+    data = await response.json();
   } catch (err) {
-    console.error('LOGIN API non-JSON response:', rawText);
+    console.error('LOGIN API: Failed to parse JSON', err);
     return {
       success: false,
-      data: null,
-      token: null,
-      role: null,
-      status: response.status,
-      rawText,
-      message: `Login gagal (status ${response.status}): ${rawText?.slice(0, 120) || 'Non-JSON response'}`,
+      message: 'Login gagal: Invalid response from server',
     };
   }
 
-  // Normalisasi struktur: jika backend tidak memakai field "data", tetap lanjut
-  const normalizedData = data?.data ?? data ?? null;
-  const token = normalizedData?.token ?? data?.token ?? null;
-  const role = normalizedData?.role ?? data?.role ?? null;
-  const message = data?.message
-    || (response.status >= 500
-      ? `Server error ${response.status}. Cek log backend Railway. Isi: ${rawText?.slice(0, 120) || 'No body'}`
-      : (response.ok ? 'Login berhasil' : `Login gagal (status ${response.status})`));
-
   console.log('LOGIN API RESPONSE:', data);
+  
   return {
-    success: response.ok,
-    data: normalizedData,
-    token,
-    role,
-    status: response.status,
-    rawText,
-    message,
+    success: data.success || false,
+    data: data.data || null,
+    message: data.message || 'Login gagal',
+  };
   };
 }

@@ -21,45 +21,42 @@ function LoginForm({ onLoginSuccess }) {
         return;
       }
       const response = await login(username, password);
-      // Cek jika response dari backend tidak sesuai
+      
+      // Validasi response object
       if (typeof response !== 'object') {
         setError('Response tidak valid dari server');
         return;
       }
-      if (response.success) {
-        // Simpan token ke localStorage
-        const tokenValue = response.token || (response.data && response.data.token);
+      
+      if (response.success && response.data) {
+        // Simpan token ke localStorage dari response.data.token
+        const tokenValue = response.data.token;
         if (tokenValue) {
           localStorage.setItem('auth_token', tokenValue);
+        } else {
+          setError('Token tidak ditemukan dalam response');
+          return;
         }
-        // Simpan nama pengguna ke localStorage untuk ditampilkan sebagai nama kasir
-        // Prioritas: response.data.name | response.data.nama | response.data.username | input username
-        let displayName = username;
-        try {
-          displayName = (response.data && (response.data.name || response.data.nama || response.data.username)) || username;
-          if (displayName) localStorage.setItem('auth_user_name', displayName);
-          // Simpan juga username input sebagai fallback pasti
-          localStorage.setItem('auth_username', username);
-        } catch (e) {
-          // ignore storage errors
-        }
-        // Cek struktur response dan log semuanya
-        console.log('FULL RESPONSE:', response);
-        let userRole = response.role || null;
-        if (!userRole && response.data && response.data.role) {
-          userRole = response.data.role;
-        } else if (!userRole && Array.isArray(response.data) && response.data[0] && response.data[0].role) {
-          userRole = response.data[0].role;
-        }
+        
+        // Simpan username ke localStorage
+        localStorage.setItem('auth_username', username);
+        localStorage.setItem('auth_user_name', response.data.name || response.data.username || username);
+        
+        // Ekstrak role dari response.data.role
+        const userRole = response.data.role;
+        
+        console.log('LOGIN SUCCESSFUL:', { token: tokenValue, role: userRole, username });
+        
         setRole(userRole);
         setSuccess('Login berhasil!');
         setShowModal(true);
+        
         setTimeout(() => {
           setShowModal(false);
           if (userRole && userRole.toLowerCase() === 'kasir') {
-            onLoginSuccess('kasir', displayName);
+            onLoginSuccess('kasir', response.data.name || username);
           } else if (userRole && userRole.toLowerCase() === 'admin') {
-            onLoginSuccess('admin', displayName);
+            onLoginSuccess('admin', response.data.name || username);
           } else {
             setError('Role tidak dikenali: ' + userRole);
           }
