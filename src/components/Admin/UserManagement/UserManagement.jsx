@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./UserManagement.css";
 
-const API_URL = "https://be-production-6856.up.railway.app/api/users"; // Use plural for RESTful endpoint
-
 function UserManagement() {
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
 	const [showModal, setShowModal] = useState(false);
 	const [modalType, setModalType] = useState(""); // "add" or "edit"
 	const [formData, setFormData] = useState({
@@ -38,7 +35,7 @@ function UserManagement() {
 
 	useEffect(() => {
 		fetchUsers();
-	}, [token]);
+	}, [token, fetchUsers]);
 
 	// Handle input change
 	const handleChange = (e) => {

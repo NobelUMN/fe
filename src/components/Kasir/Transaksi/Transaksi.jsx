@@ -234,7 +234,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
     }, 1000); // cek tiap 1 detik
 
     return () => clearInterval(interval);
-  }, [produk, cart]);
+  }, [produk, cart, processBarcode]);
 
   const addToCart = (item) => {
     setCart(prev => {
