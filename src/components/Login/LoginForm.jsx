@@ -9,7 +9,6 @@ function LoginForm({ onLoginSuccess }) {
   const [success, setSuccess] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [role, setRole] = useState('');
-  const token = localStorage.getItem('auth_token');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,8 +28,9 @@ function LoginForm({ onLoginSuccess }) {
       }
       if (response.success) {
         // Simpan token ke localStorage
-        if (response.data && response.data.token) {
-          localStorage.setItem('auth_token', response.data.token);
+        const tokenValue = response.token || (response.data && response.data.token);
+        if (tokenValue) {
+          localStorage.setItem('auth_token', tokenValue);
         }
         // Simpan nama pengguna ke localStorage untuk ditampilkan sebagai nama kasir
         // Prioritas: response.data.name | response.data.nama | response.data.username | input username
@@ -45,12 +45,10 @@ function LoginForm({ onLoginSuccess }) {
         }
         // Cek struktur response dan log semuanya
         console.log('FULL RESPONSE:', response);
-        let userRole = null;
-        if (response.data && response.data.role) {
+        let userRole = response.role || null;
+        if (!userRole && response.data && response.data.role) {
           userRole = response.data.role;
-        } else if (response.role) {
-          userRole = response.role;
-        } else if (Array.isArray(response.data) && response.data[0] && response.data[0].role) {
+        } else if (!userRole && Array.isArray(response.data) && response.data[0] && response.data[0].role) {
           userRole = response.data[0].role;
         }
         setRole(userRole);
