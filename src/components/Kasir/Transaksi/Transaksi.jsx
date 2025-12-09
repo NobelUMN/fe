@@ -319,12 +319,6 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
     return () => clearInterval(interval);
   }, [processBarcode]);
 
-  // === TAMBAHAN BARCODE: cari via backend endpoint ===
-  // (processBarcode sudah handle ini via useCallback di atas)
-    setTimeout(() => setBarcodeError(null), 3000);
-    setBarcode('');
-  };
-
   const updateJumlah = (id_produk, delta) => {
     setCart(prev =>
       prev.map(i => {
