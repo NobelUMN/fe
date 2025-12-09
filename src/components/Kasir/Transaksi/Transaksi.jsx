@@ -211,7 +211,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     if (authUserName) setKasir(authUserName);
   }, [authUserName]);
 
-  const addToCart = (item) => {
+  const addToCart = useCallback((item) => {
     setCart(prev => {
       const currentProduk = produk.find(p => p.id_produk === item.id_produk);
       const stokTerkini = currentProduk ? currentProduk.stok : item.stok;
@@ -241,7 +241,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
       };
       return [...prev, normalizedItem];
     });
-  };
+  }, [produk]);
 
   // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
   const processBarcode = useCallback(async (code) => {
