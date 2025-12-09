@@ -106,7 +106,7 @@ function LoginForm({ onLoginSuccess }) {
               required
             />
             <div className="login-forgot">
-              <a href="javascript:void(0)">Forgot Password?</a>
+              <button type="button" style={{ background: 'none', border: 'none', color: '#ff7a00', cursor: 'pointer', textDecoration: 'underline' }}>Forgot Password?</button>
             </div>
           </div>
           {error && <div className="login-error">{error}</div>}

@@ -5,7 +5,7 @@ import Dashboard from './components/Kasir/Dashboard/Dashboard';
 import Transaksi from './components/Kasir/Transaksi/Transaksi';
 import RiwayatTrx from './components/Kasir/RiwayatTrx/Riwayat_Trx';
 // LaporanHarian component removed
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

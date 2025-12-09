@@ -20,7 +20,6 @@ function CatatanPengeluaran() {
     const jumlah = d.jumlah ? Number(d.jumlah) : 1;
     return sum + (harga * jumlah);
   }, 0);
-  const [loading, setLoading] = useState(true);
 
   // Ambil data pengeluaran dari API saat komponen mount
   useEffect(() => {

@@ -5,7 +5,6 @@ function TransaksiAdmin() {
     const [transaksi, setTransaksi] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedTrx, setSelectedTrx] = useState(null);
-    const [error, setError] = useState(null);
     const [updating, setUpdating] = useState(false);
 
     useEffect(() => {

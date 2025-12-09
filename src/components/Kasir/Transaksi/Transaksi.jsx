@@ -10,9 +10,6 @@ const IconProduk = () => (
 const IconRiwayat = () => (
   <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#23398a" strokeWidth="2"/><path d="M12 6v6l4 2" stroke="#23398a" strokeWidth="2" strokeLinecap="round"/></svg>
 );
-const IconLaporan = () => (
-  <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" stroke="#23398a" strokeWidth="2"/><path d="M8 4v16M16 4v16" stroke="#23398a" strokeWidth="2"/></svg>
-);
 
 function BonTransaksi({ data, onClose }) {
   if (!data) return null;
@@ -237,7 +234,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
     }, 1000); // cek tiap 1 detik
 
     return () => clearInterval(interval);
-  }, [produk]);
+  }, [produk, cart]);
 
   const addToCart = (item) => {
     setCart(prev => {
@@ -467,8 +464,6 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
       alert('Gagal menyimpan transaksi!');
     }
   };
-
-  const now = new Date();
 
   return (
     <div className="dashboard-layout">

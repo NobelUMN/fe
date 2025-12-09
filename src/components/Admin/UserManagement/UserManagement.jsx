@@ -17,34 +17,28 @@ function UserManagement() {
 	const [editId, setEditId] = useState(null);
 
 	const token = localStorage.getItem('auth_token');
-
 	// Fetch users
-	useEffect(() => {
-		fetchUsers();
-	}, []);
-
-	const fetchWithAuth = async (url, options = {}) => {
-		const headers = {
-			'Content-Type': 'application/json',
-			...(options.headers || {}),
-			'Authorization': `Bearer ${token}`
-		};
-		return fetch(url, { ...options, headers });
-	};
-
 	const fetchUsers = async () => {
 		setLoading(true);
 		try {
-			const res = await fetchWithAuth(API_URL);
+			const res = await fetch('https://be-production-6856.up.railway.app/api/users', {
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				}
+			});
 			if (!res.ok) throw new Error("Gagal mengambil data user");
 			const data = await res.json();
 			setUsers(data);
-			setError(null);
 		} catch (err) {
-			setError(err.message);
+			console.error(err);
 		}
 		setLoading(false);
 	};
+
+	useEffect(() => {
+		fetchUsers();
+	}, [token]);
 
 	// Handle input change
 	const handleChange = (e) => {
