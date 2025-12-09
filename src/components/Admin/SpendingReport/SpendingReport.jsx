@@ -23,14 +23,17 @@ function CatatanPengeluaran() {
 
   // Ambil data pengeluaran dari API saat komponen mount
   useEffect(() => {
-    fetch("https://be-production-6856.up.railway.app/api/spending-report")
-      .then(res => res.json())
-      .then(data => {
+    const loadData = async () => {
+      try {
+        const res = await fetch("https://be-production-6856.up.railway.app/api/spending-report");
+        const data = await res.json();
         setPengeluaran(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []); // hanya saat mount
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    loadData();
+  }, []);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });

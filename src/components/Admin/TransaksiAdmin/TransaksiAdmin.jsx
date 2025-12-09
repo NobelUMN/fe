@@ -43,7 +43,7 @@ function TransaksiAdmin() {
             // jalanin di background (gak perlu await)
             Promise.allSettled(updatePromises);
         } catch (err) {
-            setError(err.message);
+            console.error(err);
             setLoading(false);
         }
     };

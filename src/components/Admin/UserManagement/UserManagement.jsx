@@ -73,8 +73,12 @@ function UserManagement() {
 	const handleAdd = async (e) => {
 		e.preventDefault();
 		try {
-			const res = await fetchWithAuth(API_URL, {
+			const res = await fetch('https://be-production-6856.up.railway.app/api/users', {
 				method: "POST",
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
 				body: JSON.stringify(formData)
 			});
 			if (!res.ok) throw new Error("Gagal menambah user");
@@ -89,8 +93,12 @@ function UserManagement() {
 	const handleEdit = async (e) => {
 		e.preventDefault();
 		try {
-			const res = await fetchWithAuth(`${API_URL}/${editId}`, {
+			const res = await fetch(`https://be-production-6856.up.railway.app/api/users/${editId}`, {
 				method: "PUT",
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
 				body: JSON.stringify(formData)
 			});
 			if (!res.ok) throw new Error("Gagal mengedit user");
@@ -105,7 +113,13 @@ function UserManagement() {
 	const handleDelete = async (id) => {
 		if (!window.confirm("Yakin ingin menghapus user ini?")) return;
 		try {
-			const res = await fetchWithAuth(`${API_URL}/${id}`, { method: "DELETE" });
+			const res = await fetch(`https://be-production-6856.up.railway.app/api/users/${id}`, {
+				method: "DELETE",
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				}
+			});
 			if (!res.ok) throw new Error("Gagal menghapus user");
 			fetchUsers();
 		} catch (err) {
