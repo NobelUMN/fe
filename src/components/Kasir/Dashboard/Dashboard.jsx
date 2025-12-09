@@ -21,13 +21,6 @@ const IconRiwayat = () => (
   </svg>
 );
 
-const IconLaporan = () => (
-  <svg width="40" height="40" fill="none" viewBox="0 0 24 24">
-    <rect x="4" y="4" width="16" height="16" rx="2" stroke="#23398a" strokeWidth="2"/>
-    <path d="M8 4v16M16 4v16" stroke="#23398a" strokeWidth="2"/>
-  </svg>
-);
-
 function Dashboard({ onLogout, setActiveMenu, activeMenu }) {
   const [produk, setProduk] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -173,7 +173,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   })();
   const [kasir, setKasir] = useState(initialKasir);
   const [tanggal] = useState(new Date().toLocaleString());
-  const [search, setSearch] = useState('');
   const [barcode, setBarcode] = useState('');
   const [barcodeError, setBarcodeError] = useState(null);
   const [metode, setMetode] = useState('tunai');
@@ -238,7 +237,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
     }, 1000); // cek tiap 1 detik
 
     return () => clearInterval(interval);
-  }, []); // jangan pakai dependency lain, biar interval stabil
+  }, [produk]);
 
   const addToCart = (item) => {
     setCart(prev => {
@@ -389,10 +388,6 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
     }
   })();
 
-  const filteredProduk = produk.filter(item =>
-    item.nama_produk.toLowerCase().includes(search.toLowerCase())
-  );
-
   const handleBayar = async () => {
     const bayarAmount = metode === 'transfer' ? subtotal : (bayar ? Number(bayar) : NaN);
 
@@ -474,7 +469,6 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
   };
 
   const now = new Date();
-  const formattedTanggal = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 
   return (
     <div className="dashboard-layout">

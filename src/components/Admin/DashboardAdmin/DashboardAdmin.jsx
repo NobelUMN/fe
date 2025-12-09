@@ -22,7 +22,7 @@ const IconTransaksi = () => (
     <path d="M16 3v4M8 3v4" stroke="#23398a" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
-const IconLaporan = () => (
+const IconUserMgmt = () => (
   <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
     <rect x="4" y="4" width="16" height="16" rx="2" stroke="#23398a" strokeWidth="2" />
     <path d="M8 4v16M16 4v16" stroke="#23398a" strokeWidth="2" />
@@ -51,7 +51,7 @@ function DashboardAdmin({ onLogout, setActiveMenu, activeMenu }) {
           className={activeMenu === 'userManagement' ? 'sidebar-link sidebar-active' : 'sidebar-link'}
           onClick={() => setActiveMenu('userManagement')}
         >
-          <span className="sidebar-icon"><IconLaporan /></span>User Management
+          <span className="sidebar-icon"><IconUserMgmt /></span>User Management
         </div>
         <div
           className={activeMenu === 'SpendingReport' ? 'sidebar-link sidebar-active' : 'sidebar-link'}
