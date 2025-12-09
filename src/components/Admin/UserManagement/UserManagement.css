@@ -1,0 +1,300 @@
+:root {
+  --primary-color: #1e3a8a;
+  --secondary-color: #f97316;
+  --background-color: #0a0a0a;
+  --text-color: #f8fafc;
+  --support-color1: #374151;
+  --support-color2: #9ca3af;
+  --font-main: 'Barlow Condensed', sans-serif;
+}
+
+/* =============================== */
+/* ========= USER TABLE ========== */
+/* =============================== */
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: var(--text-color);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  color: var(--support-color1);
+  font-family: var(--font-main);
+}
+
+/* Header */
+.user-table thead {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  text-align: left;
+}
+
+.user-table th {
+  padding: 14px 16px;
+  font-weight: 600;
+  font-size: 15px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+/* Body */
+.user-table tbody tr {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.user-table tbody tr:nth-child(even) {
+  background-color: rgba(156, 163, 175, 0.08);
+}
+
+.user-table tbody tr:hover {
+  background-color: rgba(30, 58, 138, 0.1);
+  transform: scale(1.01);
+}
+
+.user-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--support-color1);
+  border-bottom: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+/* Centered text */
+.user-table td.center {
+  text-align: center;
+}
+
+/* Empty data style */
+.user-table td[colspan] {
+  text-align: center;
+  padding: 20px;
+  color: var(--support-color2);
+  background-color: rgba(156, 163, 175, 0.08);
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-table thead {
+    display: none;
+  }
+
+  .user-table tr {
+    display: block;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .user-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border: none;
+    border-bottom: 1px solid rgba(156, 163, 175, 0.2);
+  }
+
+  .user-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+}
+
+/* =============================== */
+/* ======== MODAL OVERLAY ======== */
+/* =============================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* =============================== */
+/* ======== MODAL CARD =========== */
+/* =============================== */
+.modal {
+  background: var(--text-color);
+  color: var(--support-color1);
+  padding: 28px 32px;
+  border-radius: 16px;
+  width: 420px;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.2);
+  animation: popIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: var(--font-main);
+  border: 2px solid transparent;
+  background-image: linear-gradient(var(--text-color), var(--text-color)),
+    linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* =============================== */
+/* ======== HEADER =============== */
+/* =============================== */
+.modal h3 {
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 8px rgba(35, 57, 138, 0.3);
+}
+
+/* =============================== */
+/* ======== FORM INPUTS ========== */
+/* =============================== */
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.modal input,
+.modal select {
+  border: none;
+  border-bottom: 2px solid #d1d5db;
+  border-radius: 0;
+  padding: 8px 10px;
+  font-size: 14px;
+  outline: none;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.modal input:focus,
+.modal select:focus {
+  border-bottom-color: var(--primary-color);
+  box-shadow: none;
+}
+
+/* =============================== */
+/* ======== BUTTONS ============== */
+/* =============================== */
+.modal button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Tombol Tambah / Simpan */
+.modal button[type="submit"] {
+  background: var(--secondary-color);
+  background-size: 200%;
+  animation: gradientFlow 5s ease infinite;
+}
+
+.modal button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+/* Tombol Batal */
+.modal button[type="button"] {
+  background: #ff0000;
+}
+
+.modal button[type="button"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.35);
+}
+
+/* =============================== */
+/* ======== BUTTON STYLE ========= */
+/* =============================== */
+
+/* Umum untuk semua tombol CRUD */
+button.tambah-user {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect: naik dikit dan tambah brightness */
+.user-table button:hover,
+button.tambah-user:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Tombol Tambah di atas tabel */
+button.tambah-user {
+  margin-bottom: 16px;
+}
+
+/* Tambahkan jarak antar tombol di kolom Aksi */
+.user-table td button + button {
+  margin-left: 8px;
+}
+
+/* Warna spesifik (biar tetap beda dikit tapi senada) */
+.user-table td button:first-child {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-table td button:last-child {
+    background: #ff0000;
+    color: var(--text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}

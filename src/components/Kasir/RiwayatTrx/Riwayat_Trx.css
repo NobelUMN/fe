@@ -1,0 +1,204 @@
+:root {
+  --primary-color: #1e3a8a;
+  --secondary-color: #f97316;
+  --background-color: #0a0a0a;
+  --text-color: #f8fafc;
+  --support-color1: #374151;
+  --support-color2: #9ca3af;
+  --font-main: 'Barlow Condensed', sans-serif;
+}
+
+/* =============================== */
+/* ======== TABLE STYLE ========== */
+/* =============================== */
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: var(--text-color);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  color: var(--support-color1);
+  font-family: var(--font-main);
+}
+
+/* Header */
+.dashboard-table thead {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  text-align: left;
+}
+
+.dashboard-table thead th {
+  padding: 14px 16px;
+  font-weight: 600;
+  font-size: 15px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+/* Body */
+.dashboard-table tbody tr {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.dashboard-table tbody tr:nth-child(even) {
+  background-color: rgba(156, 163, 175, 0.1); /* dari support-color2 tapi lebih lembut */
+}
+/* Cell styling */
+.dashboard-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--support-color1);
+  border-bottom: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.dashboard-table td.center {
+  text-align: center;
+}
+
+/* Empty & loading rows */
+.dashboard-table td.center[colspan] {
+  padding: 20px;
+  color: var(--support-color2);
+  background-color: rgba(156, 163, 175, 0.08);
+  font-style: italic;
+}
+
+/* =============================== */
+/* ======= BUTTON STYLE ========== */
+/* =============================== */
+
+.dashboard-table button {
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-family: var(--font-main);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dashboard-table button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.dashboard-table button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Agar jarak tombol antar kolom rapi */
+.dashboard-table td button {
+  margin-left: 8px;
+}
+
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .dashboard-table thead {
+    display: none;
+  }
+
+  .dashboard-table tr {
+    display: block;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .dashboard-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border: none;
+    border-bottom: 1px solid rgba(156, 163, 175, 0.2);
+  }
+
+  .dashboard-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+}
+
+/* =============================== */
+/* ====== TOMBOL MODAL STYLE ===== */
+/* =============================== */
+
+/* Tombol ubah status (lebih menonjol) */
+.modal-content .ubah-status {
+  background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--font-main);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-content .ubah-status:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.modal-content .ubah-status:active {
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+.modal-content .ubah-status:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Tombol tutup (lebih lembut, warna netral) */
+.modal-content .tutup-modal {
+  background: var(--support-color2);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--font-main);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 10px;
+}
+
+.modal-content .tutup-modal:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.modal-content .tutup-modal:active {
+  transform: translateY(1px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
