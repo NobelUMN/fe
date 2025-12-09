@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Transaksi.css';
 
 const IconTransaksi = () => (
@@ -211,31 +211,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     if (authUserName) setKasir(authUserName);
   }, [authUserName]);
 
-  // === AUTO GET BARCODE DARI ESP32 ===
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/barcode');
-        if (!res.ok) return;
-
-        const data = await res.json();
-        const code = data && data.barcode ? String(data.barcode).trim() : '';
-
-        // Backend pakai Cache::pull, jadi setiap GET cuma ngasih satu event scan
-        if (code) {
-          console.log('Barcode dari ESP32 (Transaksi):', code);
-          setBarcode(code);
-          // Langsung proses, supaya kalau produk udah ada di cart -> qty nambah
-          processBarcode(code);
-        }
-      } catch (err) {
-        console.error('Gagal ambil barcode (Transaksi):', err);
-      }
-    }, 1000); // cek tiap 1 detik
-
-    return () => clearInterval(interval);
-  }, [produk, cart, processBarcode]);
-
   const addToCart = (item) => {
     setCart(prev => {
       const currentProduk = produk.find(p => p.id_produk === item.id_produk);
@@ -269,7 +244,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
   };
 
   // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
-  const processBarcode = async (code) => {
+  const processBarcode = useCallback(async (code) => {
     const trimmed = String(code || '').trim();
     if (!trimmed) return;
 
@@ -317,34 +292,35 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
     } catch (err) {
       // ignore
     }
+  }, [produk, addToCart]);
 
-    try {
-      const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`);
-      if (res.ok) {
+  // === AUTO GET BARCODE DARI ESP32 ===
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/barcode');
+        if (!res.ok) return;
+
         const data = await res.json();
-        if (data && (data.id_produk || data.id)) {
-          const normalized = {
-            ...data,
-            id_produk: data.id_produk ?? data.id ?? data.product_id,
-            id_barcode: data.id_barcode ?? data.barcode ?? data.kode_barcode ?? trimmed,
-            nama_produk: data.nama_produk ?? data.nama ?? data.name ?? 'Produk',
-            harga_jual: data.harga_jual ?? data.harga ?? data.price ?? 0,
-            stok: typeof data.stok !== 'undefined' ? data.stok : (data.stock ?? data.qty ?? 0),
-            kategori: data.kategori ?? data.category ?? data.kat ?? '-',
-          };
-          addToCart(normalized);
-          setBarcode('');
-          setBarcodeError(null);
-          console.log(`Produk ditambahkan: ${normalized.nama_produk}`);
-          console.log('processBarcode: found via barcode endpoint', normalized);
-          return;
-        }
-      }
-    } catch (err) {
-      // ignore
-    }
+        const code = data && data.barcode ? String(data.barcode).trim() : '';
 
-    setBarcodeError('Barang tidak ada');
+        // Backend pakai Cache::pull, jadi setiap GET cuma ngasih satu event scan
+        if (code) {
+          console.log('Barcode dari ESP32 (Transaksi):', code);
+          setBarcode(code);
+          // Langsung proses, supaya kalau produk udah ada di cart -> qty nambah
+          processBarcode(code);
+        }
+      } catch (err) {
+        console.error('Gagal ambil barcode (Transaksi):', err);
+      }
+    }, 1000); // cek tiap 1 detik
+
+    return () => clearInterval(interval);
+  }, [processBarcode]);
+
+  // === TAMBAHAN BARCODE: cari via backend endpoint ===
+  // (processBarcode sudah handle ini via useCallback di atas)
     setTimeout(() => setBarcodeError(null), 3000);
     setBarcode('');
   };

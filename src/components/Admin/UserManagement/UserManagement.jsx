@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./UserManagement.css";
 
 function UserManagement() {
@@ -15,7 +15,7 @@ function UserManagement() {
 
 	const token = localStorage.getItem('auth_token');
 	// Fetch users
-	const fetchUsers = async () => {
+	const fetchUsers = useCallback(async () => {
 		setLoading(true);
 		try {
 			const res = await fetch('https://be-production-6856.up.railway.app/api/users', {
@@ -31,11 +31,11 @@ function UserManagement() {
 			console.error(err);
 		}
 		setLoading(false);
-	};
+	}, [token]);
 
 	useEffect(() => {
 		fetchUsers();
-	}, [token, fetchUsers]);
+	}, [fetchUsers]);
 
 	// Handle input change
 	const handleChange = (e) => {
