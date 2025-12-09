@@ -184,7 +184,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   const barcodeTimerRef = useRef(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/produk')
+    fetch('https://be-production-6856.up.railway.app/api/produk')
       .then(res => res.json())
       .then(data => {
         const normalized = (data || []).map(p => ({
@@ -219,6 +219,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
+const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/barcode');
         if (!res.ok) return;
 
         const data = await res.json();
