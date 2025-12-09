@@ -27,9 +27,10 @@ function CatatanPengeluaran() {
       try {
         const res = await fetch("https://be-production-6856.up.railway.app/api/spending-report");
         const data = await res.json();
+        console.log('SPENDING REPORT DATA:', data);
         setPengeluaran(data);
       } catch (err) {
-        console.error(err);
+        console.error('SPENDING REPORT ERROR:', err);
       }
     };
     loadData();
@@ -105,7 +106,10 @@ function CatatanPengeluaran() {
       // Setelah submit, fetch ulang data dari backend
       fetch("https://be-production-6856.up.railway.app/api/spending-report")
         .then(res => res.json())
-        .then(data => setPengeluaran(data));
+        .then(data => {
+          console.log('SPENDING REPORT REFRESHED:', data);
+          setPengeluaran(data);
+        });
       setForm({
         keterangan: "",
         kategori: "",
