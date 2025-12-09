@@ -12,7 +12,7 @@ function App() {
   const [userRole, setUserRole] = useState('');
   const [authUserName, setAuthUserName] = useState(() => {
     try {
-      return localStorage.getItem('auth_user_name') || localStorage.getItem('auth_username') || '';
+      return localStorage.getItem('username') || localStorage.getItem('auth_user_name') || localStorage.getItem('auth_username') || '';
     } catch (e) {
       return '';
     }
@@ -32,7 +32,9 @@ function App() {
     setIsLoggedIn(false);
     setUserRole('');
     setActiveMenu('transaksi');
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
     // hapus nama pengguna yang disimpan
     try {
       localStorage.removeItem('auth_user_name');

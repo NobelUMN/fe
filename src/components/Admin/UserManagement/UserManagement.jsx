@@ -13,7 +13,7 @@ function UserManagement() {
 	});
 	const [editId, setEditId] = useState(null);
 
-	const token = localStorage.getItem('auth_token');
+	const token = localStorage.getItem('token');
 	// Fetch users
 	const fetchUsers = useCallback(async () => {
 		setLoading(true);

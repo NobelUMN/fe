@@ -155,7 +155,7 @@ const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/
 	};
 
 	// token dari login
-	const token = localStorage.getItem('auth_token');
+	const token = localStorage.getItem('token');
 
 	// fungsi fetch produk (GET)
 	const fetchProduk = async () => {

@@ -14,7 +14,15 @@ function TransaksiAdmin() {
     const fetchTransaksi = async () => {
         setLoading(true);
         try {
-            const res = await fetch("https://be-production-6856.up.railway.app/api/transaksi");
+            const token = localStorage.getItem('token');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers.Authorization = `Bearer ${token}`;
+            
+            const res = await fetch("https://be-production-6856.up.railway.app/api/transaksi", {
+                headers,
+                mode: 'cors',
+                credentials: 'include'
+            });
             const data = await res.json();
 
             // langsung tampilkan data utama dulu tanpa detail
@@ -24,7 +32,11 @@ function TransaksiAdmin() {
             // fetch detailnya di background biar gak nunggu semua selesai
             const updatePromises = data.map(async (trx) => {
                 try {
-                    const detailRes = await fetch(`https://be-production-6856.up.railway.app/api/transaksi/${trx.id_transaksi}`);
+                    const detailRes = await fetch(`https://be-production-6856.up.railway.app/api/transaksi/${trx.id_transaksi}`, {
+                        headers,
+                        mode: 'cors',
+                        credentials: 'include'
+                    });
                     const detailData = await detailRes.json();
 
                     // update transaksi yang bersangkutan saja
@@ -51,10 +63,12 @@ function TransaksiAdmin() {
 
     const handleDelete = async (id) => {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const res = await fetch(`https://be-production-6856.up.railway.app/api/transaksi/${id}`, { 
                 method: "DELETE",
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: { 'Authorization': `Bearer ${token}` },
+                mode: 'cors',
+                credentials: 'include'
             });
             if (!res.ok) throw new Error("Gagal menghapus transaksi");
             setTransaksi(list => list.filter(item => item.id_transaksi !== id));
@@ -67,13 +81,15 @@ function TransaksiAdmin() {
     const handleUpdateStatus = async (trx, newStatus) => {
         setUpdating(true);
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const res = await fetch(`https://be-production-6856.up.railway.app/api/transaksi/${trx.id_transaksi}/status`, {
                 method: "PATCH",
                 headers: { 
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${token}`
                 },
+                mode: 'cors',
+                credentials: 'include',
                 body: JSON.stringify({ status: newStatus }),
             });
             if (!res.ok) throw new Error("Gagal update status");

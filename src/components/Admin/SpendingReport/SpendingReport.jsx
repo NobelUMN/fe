@@ -83,7 +83,7 @@ function CatatanPengeluaran() {
       }))
     };
     // Sertakan token jika tersedia — mencegah server merespon tak terduga jika butuh auth
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token');
     const headers = { "Content-Type": "application/json" };
     if (token) headers.Authorization = `Bearer ${token}`;
 

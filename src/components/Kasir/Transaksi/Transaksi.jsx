@@ -163,7 +163,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   const [cart, setCart] = useState([]);
   const initialKasir = (() => {
     try {
-      return authUserName || localStorage.getItem('auth_user_name') || localStorage.getItem('auth_username') || 'Chandra Kurnia Santoso';
+      return authUserName || localStorage.getItem('username') || localStorage.getItem('auth_user_name') || localStorage.getItem('auth_username') || 'Chandra Kurnia Santoso';
     } catch (e) {
       return 'Chandra Kurnia Santoso';
     }
@@ -377,7 +377,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
       const tanggal = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 
       // Ambil token dari localStorage
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('token');
 
       const response = await fetch('https://be-production-6856.up.railway.app/api/transaksi', {
         method: 'POST',
