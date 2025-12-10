@@ -300,10 +300,10 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     }
 
     // Jika tidak ditemukan di lokal maupun backend
-    const msg = `Produk dengan barcode ${trimmed} tidak tersedia (produk kosong).`;
+    const msg = `❌ Produk dengan ID/Barcode "${trimmed}" tidak tersedia di sistem.`;
     setBarcodeError(msg);
     console.warn('processBarcode: not found -> showing message', msg);
-    alert(msg);
+    // Tidak pakai alert agar tidak mengganggu alur scan cepat
     setBarcode('');
   }, [addToCart]);
 
@@ -499,7 +499,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
                 barcodeTimerRef.current = setTimeout(() => {
                   processBarcode(v);
                   barcodeTimerRef.current = null;
-                }, 1000);
+                }, 500);
               }}
               onKeyDown={e => {
                 if (e.key === 'Enter') {
@@ -519,7 +519,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
                   barcodeTimerRef.current = setTimeout(() => {
                     processBarcode(pasted);
                     barcodeTimerRef.current = null;
-                  }, 1000);
+                  }, 500);
                 }
               }}
             />
