@@ -245,17 +245,26 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     });
   }, []);
 
-      // Cari produk berdasarkan barcode (3-tier: local -> backend list -> barcode endpoint)
+      // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
   const processBarcode = useCallback(async (code) => {
     const trimmed = String(code || '').trim();
     if (!trimmed) return;
 
     console.log('processBarcode: start', { code, trimmed });
 
-    // Tier 1: Search local produk state
-    let local = produkRef.current.find(p => [p.id_barcode, p.barcode, p.kode_barcode, p.id_produk, p.id]
-      .map(x => String(x ?? ''))
-      .includes(trimmed));
+    const normalizeVal = v => String(v ?? '').trim();
+
+    let local = produkRef.current.find(p => {
+      const candidates = [
+        normalizeVal(p.id_barcode),
+        normalizeVal(p.barcode),
+        normalizeVal(p.kode_barcode),
+        normalizeVal(p.id_produk),
+        normalizeVal(p.id),
+      ];
+      return candidates.some(c => c === trimmed);
+    });
+
     if (local) {
       addToCart(local);
       setBarcode('');
@@ -264,7 +273,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
       return;
     }
 
-    // Tier 2: Fetch fresh produk list from backend
     try {
       const listRes = await fetch('https://be-production-6856.up.railway.app/api/produk');
       if (listRes.ok) {
@@ -280,10 +288,18 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
         }));
         produkRef.current = normalizedList;
         setProduk(normalizedList);
-        
-        local = normalizedList.find(p => [p.id_barcode, p.barcode, p.kode_barcode, p.id_produk, p.id]
-          .map(x => String(x ?? ''))
-          .includes(trimmed));
+
+        local = normalizedList.find(p => {
+          const candidates = [
+            normalizeVal(p.id_barcode),
+            normalizeVal(p.barcode),
+            normalizeVal(p.kode_barcode),
+            normalizeVal(p.id_produk),
+            normalizeVal(p.id),
+          ];
+          return candidates.some(c => c === trimmed);
+        });
+
         if (local) {
           addToCart(local);
           setBarcode('');
@@ -296,36 +312,16 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
       console.error('processBarcode: error fetching produk list', err);
     }
 
-    // Tier 3: Call dedicated barcode endpoint
-    try {
-      const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && (data.id_produk || data.id)) {
-          const normalized = {
-            ...data,
-            id_produk: data.id_produk ?? data.id ?? data.product_id,
-            id_barcode: data.id_barcode ?? data.barcode ?? data.kode_barcode ?? trimmed,
-            nama_produk: data.nama_produk ?? data.nama ?? data.name ?? 'Produk',
-            harga_jual: data.harga_jual ?? data.harga ?? data.price ?? 0,
-            stok: typeof data.stok !== 'undefined' ? data.stok : (data.stock ?? data.qty ?? 0),
-            kategori: data.kategori ?? data.category ?? data.kat ?? '-',
-          };
-          addToCart(normalized);
-          setBarcode('');
-          setBarcodeError(null);
-          console.log(`Produk ditambahkan: ${normalized.nama_produk}`);
-          return;
-        }
-      }
-    } catch (err) {
-      console.error('processBarcode: error fetching barcode endpoint', err);
-    }
+    // === Jika tetap tidak ditemukan ===
+    const msg = `❌ Produk dengan barcode "${trimmed}" tidak tersedia.`;
+    console.warn('processBarcode: not found -> showing message', msg);
 
-    // Not found: show error message (non-blocking, auto-hide)
-    setBarcodeError('Barang tidak ada');
-    setTimeout(() => setBarcodeError(null), 3000);
+    // tampilkan pesan visual di UI
+    setBarcodeError(msg);
     setBarcode('');
+
+    // otomatis hilangkan pesan error setelah 5 detik
+    setTimeout(() => setBarcodeError(null), 5000);
   }, [addToCart]);
 
 
