@@ -160,6 +160,7 @@ function BonTransaksi({ data, onClose }) {
 
 function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   const [produk, setProduk] = useState([]);
+  const produkRef = useRef([]); // snapshot produk agar callback tidak stale
   const [cart, setCart] = useState([]);
   const initialKasir = (() => {
     try {
@@ -193,6 +194,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
           kategori: p.kategori ?? p.category ?? p.kat ?? '-',
         }));
         setProduk(normalized);
+        produkRef.current = normalized;
       })
       .catch(() => { /* ignore */ });
   }, []);
@@ -213,7 +215,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
 
   const addToCart = useCallback((item) => {
     setCart(prev => {
-      const currentProduk = produk.find(p => p.id_produk === item.id_produk);
+      const currentProduk = produkRef.current.find(p => p.id_produk === item.id_produk);
       const stokTerkini = currentProduk ? currentProduk.stok : item.stok;
 
       const exist = prev.find(i => i.id_produk === item.id_produk);
@@ -241,14 +243,16 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
       };
       return [...prev, normalizedItem];
     });
-  }, [produk]);
+  }, []);
 
   // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
   const processBarcode = useCallback(async (code) => {
     const trimmed = String(code || '').trim();
     if (!trimmed) return;
 
-    let local = produk.find(p =>
+    console.log('processBarcode: start', { code, trimmed });
+
+    let local = produkRef.current.find(p =>
       [p.id_barcode, p.barcode, p.kode_barcode, p.id_produk, p.id]
         .map(x => String(x ?? ''))
         .includes(trimmed)
@@ -275,6 +279,8 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
           stok: typeof p.stok !== 'undefined' ? p.stok : (p.stock ?? p.qty ?? 0),
           kategori: p.kategori ?? p.category ?? p.kat ?? '-',
         }));
+        produkRef.current = normalizedList;
+        setProduk(normalizedList);
         local = normalizedList.find(p =>
           [p.id_barcode, p.barcode, p.kode_barcode, p.id_produk, p.id]
             .map(x => String(x ?? ''))
@@ -294,11 +300,12 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     }
 
     // Jika tidak ditemukan di lokal maupun backend
-    const msg = `Produk dengan barcode ${trimmed} tidak ditemukan.`;
+    const msg = `Produk dengan barcode ${trimmed} tidak tersedia (produk kosong).`;
     setBarcodeError(msg);
+    console.warn('processBarcode: not found -> showing message', msg);
     alert(msg);
     setBarcode('');
-  }, [produk, addToCart]);
+  }, [addToCart]);
 
   // === AUTO GET BARCODE DARI ESP32 ===
   useEffect(() => {
