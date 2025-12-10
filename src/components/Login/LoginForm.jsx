@@ -12,15 +12,45 @@ function LoginForm({ onLoginSuccess }) {
 
   // Check if already logged in - prevent showing login form if token exists
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('role');
-    const storedUsername = localStorage.getItem('username');
+    const checkExistingLogin = async () => {
+      const token = localStorage.getItem('token');
+      const storedRole = localStorage.getItem('role');
+      const storedUsername = localStorage.getItem('username');
 
-    if (token && storedRole && storedUsername) {
-      console.log('User already logged in, triggering onLoginSuccess');
-      // User already logged in in another tab, trigger success callback
-      onLoginSuccess(storedRole, storedUsername);
-    }
+      if (!token) {
+        // Tidak ada token, user belum login
+        return;
+      }
+
+      try {
+        // Verify token is still valid via /api/me
+        const res = await fetch('https://be-production-6856.up.railway.app/api/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          mode: 'cors',
+          credentials: 'include'
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          // Sudah ada user yang login, redirect ke dashboard
+          console.log('User already logged in, redirecting to dashboard');
+          onLoginSuccess(storedRole, storedUsername);
+        } else {
+          // Token tidak valid, hapus dari localStorage
+          console.log('Token invalid, clearing localStorage');
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('role');
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    };
+
+    checkExistingLogin();
   }, [onLoginSuccess]);
 
   const handleSubmit = async (e) => {
