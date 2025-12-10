@@ -538,16 +538,19 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
               value={barcode}
               onChange={e => {
                 const v = e.target.value;
+                console.log('onChange: value changed', v);
                 setBarcode(v);
                 setBarcodeError(null);
                 if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
                 barcodeTimerRef.current = setTimeout(() => {
+                  console.log('onChange: timeout triggered, calling processBarcode', v);
                   processBarcode(v);
                   barcodeTimerRef.current = null;
                 }, 1000);
               }}
               onKeyDown={e => {
                 if (e.key === 'Enter') {
+                  console.log('onKeyDown: Enter pressed, calling processBarcode', barcode);
                   e.preventDefault();
                   if (barcodeTimerRef.current) {
                     clearTimeout(barcodeTimerRef.current);
