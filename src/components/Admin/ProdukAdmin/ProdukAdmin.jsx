@@ -55,7 +55,10 @@ function ProdukAdmin() {
 	useEffect(() => {
 		const interval = setInterval(async () => {
 			try {
-const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/barcode");
+				const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/barcode", {
+					mode: 'cors',
+					credentials: 'include'
+				});
 				if (!res.ok) return;
 
 				const data = await res.json();
@@ -89,7 +92,10 @@ const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/
 		if (found) return found;
 		// try backend lookup (if endpoint exists)
 		try {
-			const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`);
+			const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`, {
+				mode: 'cors',
+				credentials: 'include'
+			});
 			if (res.status === 200) {
 				const data = await res.json();
 				return data;
@@ -160,7 +166,10 @@ const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/
 	// fungsi fetch produk (GET)
 	const fetchProduk = async () => {
 		try {
-			const res = await fetch('https://be-production-6856.up.railway.app/api/produk');
+			const res = await fetch('https://be-production-6856.up.railway.app/api/produk', {
+				mode: 'cors',
+				credentials: 'include'
+			});
 			if (!res.ok) throw new Error('Gagal mengambil data produk');
 			const data = await res.json();
 			setProduk(data);
@@ -195,6 +204,8 @@ const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/
 					'Content-Type': 'application/json',
 					'Authorization': `Bearer ${token}`
 				},
+				mode: 'cors',
+				credentials: 'include',
 				body: JSON.stringify(formData)
 			});
 
@@ -225,7 +236,9 @@ const res = await fetch("https://be-production-6856.up.railway.app/api/hardware/
 				method: 'DELETE',
 				headers: {
 					'Authorization': `Bearer ${token}`
-				}
+				},
+				mode: 'cors',
+				credentials: 'include'
 			});
 			if (!res.ok) {
 				let errMsg = 'Gagal menghapus produk';
