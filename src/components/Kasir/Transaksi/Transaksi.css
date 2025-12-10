@@ -324,24 +324,3 @@
   transform: translateY(1px);
   filter: brightness(0.95);
 }
-
-/* Error message button next to barcode input */
-.barcode-error-button {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: default;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  font-family: var(--font-main);
-}
-
-.barcode-error-icon {
-  font-size: 16px;
-}
