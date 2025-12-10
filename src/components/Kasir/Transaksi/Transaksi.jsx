@@ -621,12 +621,12 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
               }}
             />
             {/* Error message button di sebelah form */}
-            {toast && toast.type === 'error' && (
+            {/* {toast && toast.type === 'error' && (
               <button className="barcode-error-button">
                 <span className="barcode-error-icon">✕</span>
                 {toast.message}
               </button>
-            )}
+            )} */}
           </div>
         </div>
 
