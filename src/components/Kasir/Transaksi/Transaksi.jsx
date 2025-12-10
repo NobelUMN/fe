@@ -172,7 +172,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   const [kasir, setKasir] = useState(initialKasir);
   const [tanggal] = useState(new Date().toLocaleString());
   const [barcode, setBarcode] = useState('');
-  const [barcodeError, setBarcodeError] = useState(null);
   const [metode, setMetode] = useState('tunai');
   const [bayar, setBayar] = useState('');
   const [namaPelanggan, setNamaPelanggan] = useState('');
@@ -259,7 +258,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     if (local) {
       addToCart(local);
       setBarcode('');
-      setBarcodeError(null);
       console.log(`Tier 1 found: ${local.nama_produk}`);
       return;
     }
@@ -290,7 +288,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
         if (local) {
           addToCart(local);
           setBarcode('');
-          setBarcodeError(null);
           console.log(`Tier 2 found: ${local.nama_produk}`);
           return;
         }
@@ -328,16 +325,15 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
         };
         addToCart(normalized);
         setBarcode('');
-        setBarcodeError(null);
         console.log(`Produk ditambahkan: ${normalized.nama_produk}`);
         return;
       } else if (res.status === 404 || !res.ok) {
         // Not found: show error message from backend or default
         const errorMsg = data?.message || data?.error || 'Barang tidak ada';
         console.log('Tier 3: barcode not found, error:', errorMsg);
-        setBarcodeError(errorMsg);
+        alert(errorMsg);  // ✅ Show popup alert
         setBarcode('');
-        setTimeout(() => setBarcodeError(null), 3000);
+        setBarcodeError(null);
         return;
       }
     } catch (err) {
@@ -345,10 +341,9 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     }
 
     // Fallback: Not found
-    console.log('Fallback: setting error message');
-    setBarcodeError('Barang tidak ada');
+    console.log('Fallback: showing alert for barcode not found');
+    alert('Barang tidak ada');  // ✅ Show popup alert
     setBarcode('');
-    setTimeout(() => setBarcodeError(null), 3000);
   }, [addToCart]);
 
 
@@ -533,14 +528,13 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <input
               type="text"
-              className={`transaksi-barcode-input ${barcodeError ? 'transaksi-barcode-input--error' : ''}`}
+              className="transaksi-barcode-input"
               placeholder="Scan atau ketik ID barcode"
               value={barcode}
               onChange={e => {
                 const v = e.target.value;
                 console.log('onChange: value changed', v);
                 setBarcode(v);
-                setBarcodeError(null);
                 if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
                 barcodeTimerRef.current = setTimeout(() => {
                   console.log('onChange: timeout triggered, calling processBarcode', v);
@@ -571,11 +565,6 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
                 }
               }}
             />
-            {barcodeError && (
-              <div role="status" aria-live="polite" className="barcode-error" style={{ whiteSpace: 'nowrap' }}>
-                {barcodeError}
-              </div>
-            )}
           </div>
         </div>
 
