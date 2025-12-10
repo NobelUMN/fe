@@ -245,18 +245,26 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     });
   }, []);
 
-  // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
+    // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
   const processBarcode = useCallback(async (code) => {
     const trimmed = String(code || '').trim();
     if (!trimmed) return;
 
     console.log('processBarcode: start', { code, trimmed });
 
-    let local = produkRef.current.find(p =>
-      [p.id_barcode, p.barcode, p.kode_barcode, p.id_produk, p.id]
-        .map(x => String(x ?? ''))
-        .includes(trimmed)
-    );
+    const normalizeVal = v => String(v ?? '').trim();
+
+    let local = produkRef.current.find(p => {
+      const candidates = [
+        normalizeVal(p.id_barcode),
+        normalizeVal(p.barcode),
+        normalizeVal(p.kode_barcode),
+        normalizeVal(p.id_produk),
+        normalizeVal(p.id),
+      ];
+      return candidates.some(c => c === trimmed);
+    });
+
     if (local) {
       addToCart(local);
       setBarcode('');
@@ -281,11 +289,18 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
         }));
         produkRef.current = normalizedList;
         setProduk(normalizedList);
-        local = normalizedList.find(p =>
-          [p.id_barcode, p.barcode, p.kode_barcode, p.id_produk, p.id]
-            .map(x => String(x ?? ''))
-            .includes(trimmed)
-        );
+
+        local = normalizedList.find(p => {
+          const candidates = [
+            normalizeVal(p.id_barcode),
+            normalizeVal(p.barcode),
+            normalizeVal(p.kode_barcode),
+            normalizeVal(p.id_produk),
+            normalizeVal(p.id),
+          ];
+          return candidates.some(c => c === trimmed);
+        });
+
         if (local) {
           addToCart(local);
           setBarcode('');
@@ -294,16 +309,20 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
           console.log('processBarcode: found after fresh list', local);
           return;
         }
+      } else {
+        console.warn('processBarcode: fetch produk returned non-ok', listRes.status);
       }
     } catch (err) {
-      // ignore
+      console.error('processBarcode: error fetching produk list', err);
+      // lanjut ke tampilkan pesan not found supaya user tetap diberi tahu
     }
 
     // Jika tidak ditemukan di lokal maupun backend
-    const msg = `❌ Produk dengan ID/Barcode "${trimmed}" tidak tersedia di sistem.`;
+    const msg = `Produk dengan barcode ${trimmed} tidak tersedia (produk kosong).`;
     setBarcodeError(msg);
     console.warn('processBarcode: not found -> showing message', msg);
-    // Tidak pakai alert agar tidak mengganggu alur scan cepat
+    // panggil alert sedikit di next tick supaya tidak bentrok dengan context async
+    setTimeout(() => alert(msg), 10);
     setBarcode('');
   }, [addToCart]);
 
@@ -499,7 +518,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
                 barcodeTimerRef.current = setTimeout(() => {
                   processBarcode(v);
                   barcodeTimerRef.current = null;
-                }, 500);
+                }, 1000);
               }}
               onKeyDown={e => {
                 if (e.key === 'Enter') {
@@ -519,7 +538,7 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
                   barcodeTimerRef.current = setTimeout(() => {
                     processBarcode(pasted);
                     barcodeTimerRef.current = null;
-                  }, 500);
+                  }, 1000);
                 }
               }}
             />
