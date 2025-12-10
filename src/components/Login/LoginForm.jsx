@@ -9,6 +9,7 @@ function LoginForm({ onLoginSuccess }) {
   const [success, setSuccess] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [role, setRole] = useState('');
+  const [isChecking, setIsChecking] = useState(true); // Add loading state
 
   // Check if already logged in - prevent showing login form if token exists
   useEffect(() => {
@@ -19,6 +20,7 @@ function LoginForm({ onLoginSuccess }) {
 
       if (!token) {
         // Tidak ada token, user belum login
+        setIsChecking(false);
         return;
       }
 
@@ -37,16 +39,19 @@ function LoginForm({ onLoginSuccess }) {
           const data = await res.json();
           // Sudah ada user yang login, redirect ke dashboard
           console.log('User already logged in, redirecting to dashboard');
-          onLoginSuccess(storedRole, storedUsername);
+          // Call onLoginSuccess immediately tanpa delay
+          onLoginSuccess(storedRole || 'kasir', storedUsername);
         } else {
           // Token tidak valid, hapus dari localStorage
           console.log('Token invalid, clearing localStorage');
           localStorage.removeItem('token');
           localStorage.removeItem('username');
           localStorage.removeItem('role');
+          setIsChecking(false);
         }
       } catch (err) {
         console.error('Error:', err);
+        setIsChecking(false);
       }
     };
 
@@ -91,6 +96,16 @@ function LoginForm({ onLoginSuccess }) {
 
   const closeModal = () => setShowModal(false);
 
+  // Show loading screen while checking existing login
+  if (isChecking) {
+    return (
+      <div className="login-container">
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100vh', fontSize: '18px', color: '#666' }}>
+          <div>Memeriksa sesi...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-container">
