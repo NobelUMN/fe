@@ -73,7 +73,7 @@ function App() {
     };
 
     checkAuth();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // ==========================================
 
   const handleLoginSuccess = (role, username) => {

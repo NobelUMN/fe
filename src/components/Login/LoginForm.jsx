@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { login } from '../../api/login';
 import './LoginForm.css';
 
 function LoginForm({ onLoginSuccess }) {
@@ -36,7 +35,7 @@ function LoginForm({ onLoginSuccess }) {
         });
 
         if (res.ok) {
-          const data = await res.json();
+          await res.json();
           // Sudah ada user yang login, redirect ke dashboard
           console.log('User already logged in, redirecting to dashboard');
           // Call onLoginSuccess immediately tanpa delay
