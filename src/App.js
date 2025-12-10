@@ -5,7 +5,7 @@ import Dashboard from './components/Kasir/Dashboard/Dashboard';
 import Transaksi from './components/Kasir/Transaksi/Transaksi';
 import RiwayatTrx from './components/Kasir/RiwayatTrx/Riwayat_Trx';
 // LaporanHarian component removed
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,6 +20,57 @@ function App() {
   const [activeMenu, setActiveMenu] = useState('transaksi');
   const [produkCache, setProdukCache] = useState(null);
   const [riwayatCache, setRiwayatCache] = useState(null);
+
+  // ========== CHECK AUTH ON APP LOAD ==========
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      const storedRole = localStorage.getItem('role');
+      
+      if (!token) {
+        // Tidak ada token, user belum login
+        return;
+      }
+
+      try {
+        const res = await fetch('https://be-production-6856.up.railway.app/api/me', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          // Token valid, restore login state
+          setIsLoggedIn(true);
+          setUserRole(storedRole || 'kasir');
+          setAuthUserName(data.username || data.user_name || authUserName);
+          setActiveMenu(storedRole === 'admin' ? 'produk' : 'transaksi');
+          console.log('Auth check passed, user:', data.username);
+        } else {
+          // Token invalid, clear localStorage
+          console.log('Auth check failed, clearing localStorage');
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('role');
+          localStorage.removeItem('auth_user_name');
+          localStorage.removeItem('auth_username');
+          setIsLoggedIn(false);
+          setUserRole('');
+          setAuthUserName('');
+        }
+      } catch (err) {
+        console.error('Error checking auth:', err);
+        // On error, clear auth state to be safe
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+  // ==========================================
 
   const handleLoginSuccess = (role, username) => {
     setIsLoggedIn(true);
