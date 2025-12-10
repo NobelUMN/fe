@@ -68,29 +68,47 @@ function LoginForm({ onLoginSuccess }) {
         setError('Username dan password wajib diisi');
         return;
       }
-      const response = await login(username, password);
-      
-      // Token, username, role sudah disimpan di localStorage oleh login()
-      const userRole = localStorage.getItem('role');
-      
-      console.log('LOGIN SUCCESSFUL - Token dan role sudah disimpan');
-      
-      setRole(userRole);
-      setSuccess('Login berhasil!');
-      setShowModal(true);
-      
-      setTimeout(() => {
-        setShowModal(false);
-        if (userRole && userRole.toLowerCase() === 'kasir') {
-          onLoginSuccess('kasir', username);
-        } else if (userRole && userRole.toLowerCase() === 'admin') {
-          onLoginSuccess('admin', username);
-        } else {
-          setError('Role tidak dikenali: ' + userRole);
-        }
-      }, 1000);
+
+      // Call login API dengan credentials include untuk session cookie
+      const res = await fetch('https://be-production-6856.up.railway.app/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors',
+        credentials: 'include', // PENTING: kirim session cookie
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Login berhasil
+        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('username', data.data.username);
+        localStorage.setItem('role', data.data.role);
+        
+        const userRole = data.data.role;
+        console.log('LOGIN SUCCESSFUL - Token dan role sudah disimpan');
+        
+        setRole(userRole);
+        setSuccess('Login berhasil!');
+        setShowModal(true);
+        
+        setTimeout(() => {
+          setShowModal(false);
+          if (userRole && userRole.toLowerCase() === 'kasir') {
+            onLoginSuccess('kasir', username);
+          } else if (userRole && userRole.toLowerCase() === 'admin') {
+            onLoginSuccess('admin', username);
+          } else {
+            setError('Role tidak dikenali: ' + userRole);
+          }
+        }, 1000);
+      } else {
+        // Login gagal - termasuk 403 jika sudah ada session aktif
+        setError(data.message); // "Sudah ada user yang login: kasir"
+      }
     } catch (err) {
-      setError('Terjadi kesalahan: ' + (err.message || err));
+      setError('Login gagal');
     }
   };
 
