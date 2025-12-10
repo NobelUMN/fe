@@ -260,13 +260,16 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
       addToCart(local);
       setBarcode('');
       setBarcodeError(null);
-      console.log(`Produk ditambahkan: ${local.nama_produk}`);
+      console.log(`Tier 1 found: ${local.nama_produk}`);
       return;
     }
+    console.log('Tier 1: not found, trying tier 2...');
 
     // Tier 2: Fetch fresh produk list from backend
     try {
+      console.log('Tier 2: fetching /api/produk...');
       const listRes = await fetch('https://be-production-6856.up.railway.app/api/produk');
+      console.log('Tier 2: response status', listRes.status);
       if (listRes.ok) {
         const list = await listRes.json();
         const normalizedList = (list || []).map(p => ({
@@ -288,18 +291,29 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
           addToCart(local);
           setBarcode('');
           setBarcodeError(null);
-          console.log(`Produk ditambahkan: ${local.nama_produk}`);
+          console.log(`Tier 2 found: ${local.nama_produk}`);
           return;
         }
+        console.log('Tier 2: not found, trying tier 3...');
       }
     } catch (err) {
-      console.error('processBarcode: error fetching produk list', err);
+      console.error('Tier 2: error fetching produk list', err);
     }
 
     // Tier 3: Call dedicated barcode endpoint
     try {
-      const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`);
-      const data = await res.json();
+      const url = `https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`;
+      console.log('Tier 3: fetching', url);
+      const res = await fetch(url);
+      console.log('Tier 3: response status', res.status);
+      
+      let data = null;
+      try {
+        data = await res.json();
+        console.log('Tier 3: response data', data);
+      } catch (parseErr) {
+        console.error('Tier 3: JSON parse error', parseErr);
+      }
       
       if (res.ok && data && (data.id_produk || data.id)) {
         // Success: barcode found
@@ -320,19 +334,21 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
       } else if (res.status === 404 || !res.ok) {
         // Not found: show error message from backend or default
         const errorMsg = data?.message || data?.error || 'Barang tidak ada';
+        console.log('Tier 3: barcode not found, error:', errorMsg);
         setBarcodeError(errorMsg);
         setBarcode('');
         setTimeout(() => setBarcodeError(null), 3000);
         return;
       }
     } catch (err) {
-      console.error('processBarcode: error fetching barcode endpoint', err);
+      console.error('processBarcode: error in tier 3', err);
     }
 
     // Fallback: Not found
+    console.log('Fallback: setting error message');
     setBarcodeError('Barang tidak ada');
-    setTimeout(() => setBarcodeError(null), 3000);
     setBarcode('');
+    setTimeout(() => setBarcodeError(null), 3000);
   }, [addToCart]);
 
 
