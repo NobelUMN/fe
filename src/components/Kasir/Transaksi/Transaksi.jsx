@@ -292,6 +292,12 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     } catch (err) {
       // ignore
     }
+
+    // Jika tidak ditemukan di lokal maupun backend
+    const msg = `Produk dengan barcode ${trimmed} tidak ditemukan.`;
+    setBarcodeError(msg);
+    alert(msg);
+    setBarcode('');
   }, [produk, addToCart]);
 
   // === AUTO GET BARCODE DARI ESP32 ===
