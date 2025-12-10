@@ -245,7 +245,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     });
   }, []);
 
-    // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
+      // Cari produk berdasarkan barcode (local -> backend) lalu tambahkan ke cart
   const processBarcode = useCallback(async (code) => {
     const trimmed = String(code || '').trim();
     if (!trimmed) return;
@@ -270,7 +270,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
       setBarcode('');
       setBarcodeError(null);
       console.log(`Produk ditambahkan: ${local.nama_produk}`);
-      console.log('processBarcode: found locally', local);
       return;
     }
 
@@ -306,25 +305,28 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
           setBarcode('');
           setBarcodeError(null);
           console.log(`Produk ditambahkan: ${local.nama_produk}`);
-          console.log('processBarcode: found after fresh list', local);
           return;
         }
-      } else {
-        console.warn('processBarcode: fetch produk returned non-ok', listRes.status);
       }
     } catch (err) {
       console.error('processBarcode: error fetching produk list', err);
-      // lanjut ke tampilkan pesan not found supaya user tetap diberi tahu
     }
 
-    // Jika tidak ditemukan di lokal maupun backend
-    const msg = `Produk dengan barcode ${trimmed} tidak tersedia (produk kosong).`;
-    setBarcodeError(msg);
+    // === Jika tetap tidak ditemukan ===
+    const msg = `❌ Produk dengan barcode "${trimmed}" tidak tersedia.`;
     console.warn('processBarcode: not found -> showing message', msg);
-    // panggil alert sedikit di next tick supaya tidak bentrok dengan context async
-    setTimeout(() => alert(msg), 10);
+
+    // tampilkan pesan visual di UI
+    setBarcodeError(msg);
     setBarcode('');
+
+    // munculkan alert untuk notifikasi cepat
+    alert(msg);
+
+    // otomatis hilangkan pesan error setelah 5 detik
+    setTimeout(() => setBarcodeError(null), 5000);
   }, [addToCart]);
+
 
   // === AUTO GET BARCODE DARI ESP32 ===
   useEffect(() => {
