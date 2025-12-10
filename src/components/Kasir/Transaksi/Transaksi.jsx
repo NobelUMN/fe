@@ -1,6 +1,51 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Transaksi.css';
 
+// ========== CUSTOM TOAST COMPONENT ==========
+function Toast({ message, type = 'error', duration = 3000, onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, duration);
+    return () => clearTimeout(timer);
+  }, [duration, onClose]);
+
+  const bgColor = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#007bff';
+  const textColor = '#fff';
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '20px',
+      right: '20px',
+      backgroundColor: bgColor,
+      color: textColor,
+      padding: '14px 20px',
+      borderRadius: '8px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      fontSize: '14px',
+      fontWeight: '500',
+      zIndex: 9999,
+      animation: 'slideInRight 0.3s ease-in-out',
+      maxWidth: '300px',
+      wordWrap: 'break-word',
+    }}>
+      {message}
+      <style>{`
+        @keyframes slideInRight {
+          from {
+            transform: translateX(400px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+// ============================================
+
 const IconTransaksi = () => (
   <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke="#23398a" strokeWidth="2"/><path d="M16 3v4M8 3v4" stroke="#23398a" strokeWidth="2" strokeLinecap="round"/></svg>
 );
@@ -172,6 +217,7 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
   const [kasir, setKasir] = useState(initialKasir);
   const [tanggal] = useState(new Date().toLocaleString());
   const [barcode, setBarcode] = useState('');
+  const [toast, setToast] = useState(null);
   const [metode, setMetode] = useState('tunai');
   const [bayar, setBayar] = useState('');
   const [namaPelanggan, setNamaPelanggan] = useState('');
@@ -331,9 +377,8 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
         // Not found: show error message from backend or default
         const errorMsg = data?.message || data?.error || 'Barang tidak ada';
         console.log('Tier 3: barcode not found, error:', errorMsg);
-        alert(errorMsg);  // ✅ Show popup alert
+        setToast({ message: errorMsg, type: 'error' });
         setBarcode('');
-        setBarcodeError(null);
         return;
       }
     } catch (err) {
@@ -341,8 +386,8 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     }
 
     // Fallback: Not found
-    console.log('Fallback: showing alert for barcode not found');
-    alert('Barang tidak ada');  // ✅ Show popup alert
+    console.log('Fallback: showing toast for barcode not found');
+    setToast({ message: 'Barang tidak ada', type: 'error' });
     setBarcode('');
   }, [addToCart]);
 
@@ -490,6 +535,16 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
 
   return (
     <div className="dashboard-layout">
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={3000}
+          onClose={() => setToast(null)}
+        />
+      )}
+
       {/* Sidebar */}
       <div className="dashboard-sidebar">
         <div className="dashboard-logo">CAN<br />BENGKEL</div>
