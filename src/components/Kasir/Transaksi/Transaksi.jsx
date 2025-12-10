@@ -320,9 +320,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     setBarcodeError(msg);
     setBarcode('');
 
-    // munculkan alert untuk notifikasi cepat
-    alert(msg);
-
     // otomatis hilangkan pesan error setelah 5 detik
     setTimeout(() => setBarcodeError(null), 5000);
   }, [addToCart]);
