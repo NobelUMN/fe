@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { login } from '../../api/login';
 import './LoginForm.css';
 
@@ -9,6 +9,19 @@ function LoginForm({ onLoginSuccess }) {
   const [success, setSuccess] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [role, setRole] = useState('');
+
+  // Check if already logged in - prevent showing login form if token exists
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedRole = localStorage.getItem('role');
+    const storedUsername = localStorage.getItem('username');
+
+    if (token && storedRole && storedUsername) {
+      console.log('User already logged in, triggering onLoginSuccess');
+      // User already logged in in another tab, trigger success callback
+      onLoginSuccess(storedRole, storedUsername);
+    }
+  }, [onLoginSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

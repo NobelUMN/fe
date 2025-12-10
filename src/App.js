@@ -20,6 +20,7 @@ function App() {
   const [activeMenu, setActiveMenu] = useState('transaksi');
   const [produkCache, setProdukCache] = useState(null);
   const [riwayatCache, setRiwayatCache] = useState(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true); // Add loading state for auth check
 
   // ========== CHECK AUTH ON APP LOAD ==========
   useEffect(() => {
@@ -29,6 +30,7 @@ function App() {
       
       if (!token) {
         // Tidak ada token, user belum login
+        setIsAuthChecking(false);
         return;
       }
 
@@ -65,6 +67,8 @@ function App() {
         // On error, clear auth state to be safe
         localStorage.removeItem('token');
         setIsLoggedIn(false);
+      } finally {
+        setIsAuthChecking(false); // Always set false when done
       }
     };
 
@@ -93,6 +97,15 @@ function App() {
     } catch (e) { /* ignore */ }
     setAuthUserName('');
   };
+
+  // Show loading screen while checking auth
+  if (isAuthChecking) {
+    return (
+      <div className="App" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '18px', color: '#666' }}>
+        <div>Memeriksa sesi...</div>
+      </div>
+    );
+  }
 
   // Otorisasi berdasarkan role
   if (isLoggedIn && userRole === 'kasir') {
