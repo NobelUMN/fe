@@ -485,48 +485,50 @@ const res = await fetch('https://be-production-6856.up.railway.app/api/hardware/
         {/* search bar removed per request */}
         <div className="transaksi-barcode" style={{ margin: '12px 0' }}>
           <label style={{ display: 'block', marginBottom: 6, fontWeight: 500 }}>ID Barcode</label>
-          <input
-            type="text"
-            className={`transaksi-barcode-input ${barcodeError ? 'transaksi-barcode-input--error' : ''}`}
-            placeholder="Scan atau ketik ID barcode"
-            value={barcode}
-            onChange={e => {
-              const v = e.target.value;
-              setBarcode(v);
-              setBarcodeError(null);
-              if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
-              barcodeTimerRef.current = setTimeout(() => {
-                processBarcode(v);
-                barcodeTimerRef.current = null;
-              }, 1000);
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                if (barcodeTimerRef.current) {
-                  clearTimeout(barcodeTimerRef.current);
-                  barcodeTimerRef.current = null;
-                }
-                processBarcode(barcode);
-              }
-            }}
-            onPaste={e => {
-              const pasted = (e.clipboardData || window.clipboardData).getData('Text');
-              if (pasted) {
-                setBarcode(pasted);
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <input
+              type="text"
+              className={`transaksi-barcode-input ${barcodeError ? 'transaksi-barcode-input--error' : ''}`}
+              placeholder="Scan atau ketik ID barcode"
+              value={barcode}
+              onChange={e => {
+                const v = e.target.value;
+                setBarcode(v);
+                setBarcodeError(null);
                 if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
                 barcodeTimerRef.current = setTimeout(() => {
-                  processBarcode(pasted);
+                  processBarcode(v);
                   barcodeTimerRef.current = null;
                 }, 1000);
-              }
-            }}
-          />
-          {barcodeError && (
-            <div role="status" aria-live="polite" className="barcode-error">
-              {barcodeError}
-            </div>
-          )}
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (barcodeTimerRef.current) {
+                    clearTimeout(barcodeTimerRef.current);
+                    barcodeTimerRef.current = null;
+                  }
+                  processBarcode(barcode);
+                }
+              }}
+              onPaste={e => {
+                const pasted = (e.clipboardData || window.clipboardData).getData('Text');
+                if (pasted) {
+                  setBarcode(pasted);
+                  if (barcodeTimerRef.current) clearTimeout(barcodeTimerRef.current);
+                  barcodeTimerRef.current = setTimeout(() => {
+                    processBarcode(pasted);
+                    barcodeTimerRef.current = null;
+                  }, 1000);
+                }
+              }}
+            />
+            {barcodeError && (
+              <div role="status" aria-live="polite" className="barcode-error" style={{ whiteSpace: 'nowrap' }}>
+                {barcodeError}
+              </div>
+            )}
+          </div>
         </div>
 
         <table className="dashboard-table">
