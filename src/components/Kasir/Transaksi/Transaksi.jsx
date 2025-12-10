@@ -299,30 +299,37 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     // Tier 3: Call dedicated barcode endpoint
     try {
       const res = await fetch(`https://be-production-6856.up.railway.app/api/produk/barcode/${encodeURIComponent(trimmed)}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && (data.id_produk || data.id)) {
-          const normalized = {
-            ...data,
-            id_produk: data.id_produk ?? data.id ?? data.product_id,
-            id_barcode: data.id_barcode ?? data.barcode ?? data.kode_barcode ?? trimmed,
-            nama_produk: data.nama_produk ?? data.nama ?? data.name ?? 'Produk',
-            harga_jual: data.harga_jual ?? data.harga ?? data.price ?? 0,
-            stok: typeof data.stok !== 'undefined' ? data.stok : (data.stock ?? data.qty ?? 0),
-            kategori: data.kategori ?? data.category ?? data.kat ?? '-',
-          };
-          addToCart(normalized);
-          setBarcode('');
-          setBarcodeError(null);
-          console.log(`Produk ditambahkan: ${normalized.nama_produk}`);
-          return;
-        }
+      const data = await res.json();
+      
+      if (res.ok && data && (data.id_produk || data.id)) {
+        // Success: barcode found
+        const normalized = {
+          ...data,
+          id_produk: data.id_produk ?? data.id ?? data.product_id,
+          id_barcode: data.id_barcode ?? data.barcode ?? data.kode_barcode ?? trimmed,
+          nama_produk: data.nama_produk ?? data.nama ?? data.name ?? 'Produk',
+          harga_jual: data.harga_jual ?? data.harga ?? data.price ?? 0,
+          stok: typeof data.stok !== 'undefined' ? data.stok : (data.stock ?? data.qty ?? 0),
+          kategori: data.kategori ?? data.category ?? data.kat ?? '-',
+        };
+        addToCart(normalized);
+        setBarcode('');
+        setBarcodeError(null);
+        console.log(`Produk ditambahkan: ${normalized.nama_produk}`);
+        return;
+      } else if (res.status === 404 || !res.ok) {
+        // Not found: show error message from backend or default
+        const errorMsg = data?.message || data?.error || 'Barang tidak ada';
+        setBarcodeError(errorMsg);
+        setBarcode('');
+        setTimeout(() => setBarcodeError(null), 3000);
+        return;
       }
     } catch (err) {
       console.error('processBarcode: error fetching barcode endpoint', err);
     }
 
-    // Not found: show error message (non-blocking, auto-hide)
+    // Fallback: Not found
     setBarcodeError('Barang tidak ada');
     setTimeout(() => setBarcodeError(null), 3000);
     setBarcode('');
