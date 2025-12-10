@@ -296,7 +296,6 @@ function Transaksi({ onLogout, setActiveMenu, activeMenu, authUserName }) {
     // Jika tidak ditemukan di lokal maupun backend
     const msg = `Produk dengan barcode ${trimmed} tidak ditemukan.`;
     setBarcodeError(msg);
-    alert(msg);
     setBarcode('');
   }, [produk, addToCart]);
 
